@@ -5,12 +5,12 @@ Created on Sep 7, 2013
 '''
 import pickle
 from datetime import datetime
-import urllib.request
 from bs4 import BeautifulSoup
 import re
 import string
 import json
 import codecs
+import requests
 
 def loadState():
     try:
@@ -32,15 +32,10 @@ apps_categories = {}
 start_time = datetime.now()
 
 def getPageAsSoup( url ):
-    try:
-        response = urllib.request.urlopen( url )
-    except urllib.error.HTTPError as e:
-        print( "HTTPError with: ", url, e )
-        return None
-    the_page = response.read()
-    soup = BeautifulSoup( the_page )
-
-    return soup
+    req = requests.get(url)
+    if req.ok:
+        return BeautifulSoup(req.content)
+    return None
 
 def reportProgress():
     current_time = datetime.now()
