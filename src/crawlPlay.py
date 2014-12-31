@@ -5,11 +5,10 @@ Created on Aug 28, 2013
 '''
 
 from bs4 import BeautifulSoup
-import urllib.request
-import urllib.parse
 import codecs
 import json
 import pickle
+import requests
 from datetime import datetime
 
 def loadState():
@@ -32,21 +31,16 @@ count_offset = len( apps_discovered )
 start_time = datetime.now()
 
 def getPageAsSoup( url, post_values ):
+    req = None
     if post_values:
-        data = urllib.parse.urlencode( post_values )
-        data = data.encode( character_encoding )
-        req = urllib.request.Request( url, data )
+        req = requests.post(url, data=post_values)
     else:
-        req = url
-    try:
-        response = urllib.request.urlopen( req )
-    except urllib.error.HTTPError as e:
-        print( "HTTPError with: ", url, "\t", e )
-        return None
-    the_page = response.read()
-    soup = BeautifulSoup( the_page )
-
-    return soup
+        req = requests.get(url)
+    
+    if req.status_code == 200:
+        soup = BeautifulSoup(req.content)
+        return soup
+    return None
 
 def openResultFiles(all_categories):
     fileHandlers = {}
