@@ -144,6 +144,7 @@ def getTopAppsData( url, start, num, app_type ):
     skipped_apps = []
     for div in soup.findAll( 'div', {'class' : 'details'} ):
         title = div.find( 'a', {'class':'title'} )
+        app_details = {}
         try:
             app_details = getAppDetails( title.get( 'href' ) )
         except AttributeError:
